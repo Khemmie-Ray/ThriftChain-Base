@@ -38,6 +38,7 @@ const Header = () => {
         >
           Connect Wallet
         </button>
+        {/* <w3m-button /> */}
       </nav>
       <nav className="w-[90%] mx-auto lg:hidden md:hidden items-center justify-between text-white font-[500] flex">
         <img src={logo} alt="Thriftchain logo" />

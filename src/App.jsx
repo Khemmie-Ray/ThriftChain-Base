@@ -17,7 +17,7 @@ import CreateGroupModule from './pages/Dashboard/CreateGroupModule';
 import InProgress from './components/dashboard/InProgress';
 import IndividualSavingsDetail from './pages/Dashboard/Savings/IndividualSavingsDetail';
 import GroupDetails from './pages/Dashboard/Savings/GroupDetails';
-import './connection/index'
+import './connection'
 
 const router = createBrowserRouter(
   createRoutesFromElements(

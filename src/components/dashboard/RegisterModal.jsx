@@ -1,16 +1,16 @@
 import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { useState } from "react";
-import useRegister from "../../hooks/useRegister";
+import useRegister from '../../hooks/useRegister'
 
 const RegisterModal = () => {
   let [isOpen, setIsOpen] = useState(false);
   const [username, setUsername] = useState("");
-  const [isLister, setIslister] = useState(false);
+  const [isLister, setIslister] = useState("");
   const handleRegister = useRegister();
 
   const handleSignup = async () => {
     await handleRegister(username, isLister);
-    setIslister(null);
+    setIslister("");
     setUsername("");
   };
 
@@ -65,7 +65,7 @@ const RegisterModal = () => {
                 onChange={(e) => setIslister(e.target.value)}
                 value={isLister}
               >
-                <option value={null}>No Option Yet</option>
+                <option value={""} defaultChecked>No Option Yet</option>
                 <option value={true}>Yes</option>
                 <option value={false}>No</option>
               </select>

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import useSignerOrProvider from "./useSignerorProvider";
+import useSignerOrProvider from "./useSignerOrProvider";
 import { ethers } from "ethers";
 import abi from '../constants/abi.json'
 
