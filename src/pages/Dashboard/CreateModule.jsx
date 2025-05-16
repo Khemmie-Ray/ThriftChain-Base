@@ -34,7 +34,18 @@ const CreateModule = () => {
       return;
     }
 
-    const goalAmountInWei = ethers.parseUnits(goalAmount, 18);
+    const selectedToken = tokenList[vaultAddress];
+    if (!selectedToken) {
+      toast.error("Invalid token selected", {
+        position: "top-center",
+      });
+      return;
+    }
+
+    const goalAmountInWei = ethers.parseUnits(
+      goalAmount,
+      selectedToken.decimals
+    );
 
     await handleCreate(
       goalName,
@@ -46,6 +57,7 @@ const CreateModule = () => {
       participant
     );
     setGoalAmount("");
+    console.log(selectedToken.decimals)
     setGoalName("");
     setParticipant(0);
     setStartTime("");

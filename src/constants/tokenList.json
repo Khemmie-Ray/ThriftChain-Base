@@ -2,7 +2,7 @@
     "0x323e78f944A9a1FcF3a10efcC5319DBb0bB6e673": {
         "name": "USDT",
         "symbol": "USDT",
-        "decimals": 18,
+        "decimals": 6,
         "address": "0x323e78f944A9a1FcF3a10efcC5319DBb0bB6e673"
     },
     "0x220171b3F1883a21e29B4A8A53D15ce55e0E720c": {

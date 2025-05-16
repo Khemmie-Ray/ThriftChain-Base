@@ -18,6 +18,7 @@ import InProgress from './components/dashboard/InProgress';
 import IndividualSavingsDetail from './pages/Dashboard/Savings/IndividualSavingsDetail';
 import GroupDetails from './pages/Dashboard/Savings/GroupDetails';
 import './connection'
+import { ThriftContextProvider } from './context/ThriftContextProvider';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,7 +29,7 @@ const router = createBrowserRouter(
       <Route path='/dashboard' element={<DashboardLayout />}>
       <Route index element={<Dashboard />} />
       <Route path='/dashboard/individual-savings' element={<IndividualSavings />} />
-      <Route path='/dashboard/individual-savings/impo:id' element={<IndividualSavingsDetail />} />
+      <Route path='/dashboard/individual-savings/:id' element={<IndividualSavingsDetail />} />
       <Route path='/dashboard/individual-savings/create-module' element={<CreateModule />} />
       <Route path='/dashboard/group-savings' element={<GroupSavings />} />
       <Route path='/dashboard/group-savings/:id' element={<GroupDetails />} />
@@ -46,7 +47,9 @@ const router = createBrowserRouter(
 const App = () => {
   return (
      <div className="max-w-[1440px] mx-auto font-dmsans text-[16px] text-dark">
+      <ThriftContextProvider>
          <RouterProvider router={router} />
+         </ThriftContextProvider>
        </div>
   )
 }

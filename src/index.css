@@ -62,9 +62,6 @@
   height: 0px;
 }
 
-.custom-range {
-  --progress: 50%;
-}
 .custom-range:focus {
   outline: none;
 }

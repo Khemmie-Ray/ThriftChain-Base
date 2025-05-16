@@ -4,9 +4,18 @@ import Thrifter from "../../components/dashboard/Thrifter";
 import AssetOwner from "../../components/dashboard/AssetOwner";
 import { Button } from "@headlessui/react";
 import RegisterModal from "../../components/dashboard/RegisterModal";
+import { useThriftData } from "../../context/ThriftContextProvider";
+import useFetchIndividual from "../../hooks/useFetchIndividual";
 
 const Dashboard = () => {
   const [selectedTab, setSelectedTab] = useState("thrifter");
+  const { allSingle, allGroup, groupUser, singleUser } = useThriftData();
+  const { singleThriftAll, singleThriftUser } = useFetchIndividual();
+  console.log(singleThriftAll, singleThriftUser)
+
+//  console.log("Help", allGroup, allSingle, groupUser, singleUser)
+
+
 
   const selectedStyle = "bg-[#6138FE] text-white";
   const defaultStyle = "text-[#5E6074]";

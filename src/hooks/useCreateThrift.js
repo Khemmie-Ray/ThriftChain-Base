@@ -20,8 +20,6 @@ const useCreateThrift = () => {
       vaultAddress,
       startTime,
       endTime,
-      platformFee,
-      emergencyFee,
       participant
     ) => {
       if (
@@ -31,8 +29,6 @@ const useCreateThrift = () => {
         !vaultAddress ||
         !startTime ||
         !endTime ||
-        !platformFee ||
-        !emergencyFee ||
         participant === null || participant === undefined
       ) {
         toast.error("Invalid Input");
@@ -62,13 +58,9 @@ const useCreateThrift = () => {
           vaultAddress,
           startTime,
           endTime,
-          platformFee,
-          emergencyFee,
           participant
         );
-        console.log(tx);
         const receipt = await tx.wait();
-        console.log(receipt);
 
         if (receipt.status === 1) {
           toast.success("New module creation Successful");

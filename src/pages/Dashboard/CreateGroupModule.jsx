@@ -3,6 +3,7 @@ import { DashNav, Button } from "../../components/shared/Reuse";
 import { ethers, parseUnits } from "ethers";
 import useCreateThrift from "../../hooks/useCreateThrift";
 import { toast } from "react-toastify";
+import tokenList from "../../constants/tokenList.json";
 
 const CreateGroupModule = () => {
   const [goalName, setGoalName] = useState("");
@@ -11,8 +12,6 @@ const CreateGroupModule = () => {
   const [vaultAddress, setVaultAddress] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
-  const [platformFee, setPlatformFee] = useState("");
-  const [emergencyFee, setEmergencyFee] = useState("");
   const [participant, setParticipant] = useState(1);
 
   const handleCreate = useCreateThrift();
@@ -35,9 +34,18 @@ const CreateGroupModule = () => {
       return;
     }
 
-    const goalAmountInWei = ethers.parseUnits(goalAmount, 18);
-    const platformFeeInWei = ethers.parseUnits(platformFee, 18);
-    const emergencyFeeInWei = ethers.parseUnits(emergencyFee, 18);
+    const selectedToken = tokenList[vaultAddress];
+    if (!selectedToken) {
+      toast.error("Invalid token selected", {
+        position: "top-center",
+      });
+      return;
+    }
+
+    const goalAmountInWei = ethers.parseUnits(
+      goalAmount,
+      selectedToken.decimals
+    );
 
     await handleCreate(
       goalName,
@@ -46,19 +54,15 @@ const CreateGroupModule = () => {
       vaultAddress,
       startDate,
       endDate,
-      platformFeeInWei.toString(),
-      emergencyFeeInWei.toString(),
       participant
     );
     setGoalAmount("");
     setGoalName("");
-    setEmergencyFee("");
     setParticipant(1);
     setStartTime("");
     setEndTime("");
-    setPlatformFee("");
     setVaultAddress("");
-    savingFrequency("");
+    setSavingFrequency("");
   };
 
   return (
@@ -93,7 +97,7 @@ const CreateGroupModule = () => {
             <input
               type="text"
               value={goalAmount}
-              onChange={(e) => setGoalAmount(e.target.value).parseEthers}
+              onChange={(e) => setGoalAmount(e.target.value)}
               placeholder="Add your target amount"
               className="p-3 border border-lightgray block w-[100%] text-xs rounded-lg"
             />
@@ -115,16 +119,24 @@ const CreateGroupModule = () => {
             </select>
           </div>
           <div className="my-4">
-            <label className="text-[14px] font-[500]">
-              Add Currency Address
-            </label>
-            <input
-              type="text"
+            <label className="text-[14px] font-[500]">Pick Currency</label>
+            <select
               value={vaultAddress}
               onChange={(e) => setVaultAddress(e.target.value)}
-              placeholder="Add Wallet Address"
               className="p-3 border border-lightgray block w-[100%] text-xs rounded-lg"
-            />
+            >
+              <option value="" disabled>
+                Click on the arrow to select an option
+              </option>
+              {Object.keys(tokenList).map((address) => {
+                const token = tokenList[address];
+                return (
+                  <option key={token.address} value={token.address}>
+                    {token.symbol}
+                  </option>
+                );
+              })}
+            </select>
           </div>
           <div className="my-4">
             <label className="text-[14px] font-[500]">Start Time</label>
@@ -145,27 +157,9 @@ const CreateGroupModule = () => {
             />
           </div>
           <div className="my-4">
-            <label className="text-[14px] font-[500]">Platform Fee</label>
-            <input
-              type="text"
-              value={platformFee}
-              onChange={(e) => setPlatformFee(e.target.value)}
-              placeholder="Set a Fee"
-              className="p-3 border border-lightgray block w-[100%] text-xs rounded-lg"
-            />
-          </div>
-          <div className="my-4">
-            <label className="text-[14px] font-[500]">Emergency Fee</label>
-            <input
-              type="text"
-              value={emergencyFee}
-              onChange={(e) => setEmergencyFee(e.target.value)}
-              placeholder="Set a Penalty Fee"
-              className="p-3 border border-lightgray block w-[100%] text-xs rounded-lg"
-            />
-          </div>
-          <div className="my-4">
-            <label className="text-[14px] font-[500]">Number of Participants (1 upwards)</label>
+            <label className="text-[14px] font-[500]">
+              Number of Participants (1 upwards)
+            </label>
             <input
               type="number"
               value={participant}
