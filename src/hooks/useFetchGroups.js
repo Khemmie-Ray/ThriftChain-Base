@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import multicallAbi from "../constants/multicallabi.json";
-import { useAppKitAccount, useAppKitNetwork, useAppKitProvider } from "@reown/appkit/react";
-import ABI from "../constants/singlethriftAbi.json";
+import { useAppKitNetwork } from "@reown/appkit/react";
+import ABI from "../constants/groupthriftAbi.json";
 import { useThriftData } from "../context/ThriftContextProvider";
 import useSignerOrProvider from "./useSignerOrProvider";
 import { Contract, Interface } from "ethers";
 
-const useFetchIndividual = () => {
-  const { allSingle, singleUser } = useThriftData();
+const useFetchGroups = () => {
+  const { allGroup, groupUser } = useThriftData(); 
   const { chainId } = useAppKitNetwork();
   const { readOnlyProvider } = useSignerOrProvider();
-  const [singleThriftAll, setSingleThriftAll] = useState([]);
-  const [singleThriftUser, setSingleThriftUser] = useState([]);
+  const [groupThriftAll, setGroupThriftAll] = useState([]);
+  const [groupThriftUser, setGroupThriftUser] = useState([]);
 
   const itf = useMemo(() => new Interface(ABI), []);
   const multicallAddr = import.meta.env.VITE_MULTICALL2_ADDRESS;
@@ -23,7 +23,7 @@ const useFetchIndividual = () => {
   };
 
   const decodeThrift = (res) => {
-    const raw = itf.decodeFunctionResult("getIndividualGoal", res.returnData)[0];
+    const raw = itf.decodeFunctionResult("getGroupGoal", res.returnData)[0];
     const arr = Array.from(raw);
 
     return {
@@ -38,11 +38,13 @@ const useFetchIndividual = () => {
       startDate: Number(arr[8]),
       endDate: Number(arr[9]),
       lastsaved: Number(arr[10]),
-      frequency: Number(arr[11]),
+      totalMember: Number(arr[11]),
+      memberAddress: arr[12],
+      frequency: Number(arr[13]),
     };
   };
 
-  const fetchSingle = useCallback(async () => {
+  const fetchGroup = useCallback(async () => {
     if (!chainId || !readOnlyProvider) return;
 
     const multicallContract = new Contract(
@@ -51,58 +53,50 @@ const useFetchIndividual = () => {
       readOnlyProvider
     );
 
-    const normalizedAllSingle = normalizeAddresses(allSingle);
-    const normalizedSingleUser = normalizeAddresses(singleUser);
+    const normalizedAllGroup = normalizeAddresses(allGroup);
+    const normalizedGroupUser = normalizeAddresses(groupUser);
 
-    const allSingleCalls = normalizedAllSingle.map((addr) => ({
+    const allGroupCalls = normalizedAllGroup.map((addr) => ({
       target: addr,
-      callData: itf.encodeFunctionData("getIndividualGoal"),
+      callData: itf.encodeFunctionData("getGroupGoal"),
     }));
 
-    const singleUserCalls = normalizedSingleUser.map((addr) => ({
+    const groupUserCalls = normalizedGroupUser.map((addr) => ({
       target: addr,
-      callData: itf.encodeFunctionData("getIndividualGoal"),
+      callData: itf.encodeFunctionData("getGroupGoal"),
     }));
 
     try {
       const [resultAll, resultUser] = await Promise.all([
-        multicallContract.tryAggregate.staticCall(true, allSingleCalls),
-        multicallContract.tryAggregate.staticCall(true, singleUserCalls),
+        multicallContract.tryAggregate.staticCall(true, allGroupCalls),
+        multicallContract.tryAggregate.staticCall(true, groupUserCalls),
       ]);
 
-      // Decode and attach address
-      const decodedAll = resultAll.map((res, idx) => ({
-        address: normalizedAllSingle[idx],
+      const decodedAll = resultAll.map((res, i) => ({
         ...decodeThrift(res),
+        address: normalizedAllGroup[i], // attach address
       }));
 
-      const decodedUser = resultUser.map((res, idx) => ({
-        address: normalizedSingleUser[idx],
+      const decodedUser = resultUser.map((res, i) => ({
         ...decodeThrift(res),
+        address: normalizedGroupUser[i], // attach address
       }));
 
-      setSingleThriftAll(decodedAll);
-      setSingleThriftUser(decodedUser);
+      setGroupThriftAll(decodedAll);
+      setGroupThriftUser(decodedUser);
     } catch (error) {
       console.error("Failed to fetch individual thrifts:", error);
     }
-  }, [
-    allSingle,
-    singleUser,
-    itf,
-    multicallAddr,
-    readOnlyProvider,
-    chainId,
-  ]);
+  }, [allGroup, groupUser, itf, multicallAddr, readOnlyProvider, chainId]);
 
   useEffect(() => {
-    fetchSingle();
-  }, [fetchSingle]);
+    fetchGroup();
+  }, [fetchGroup]);
 
   return {
-    singleThriftAll,
-    singleThriftUser,
+    groupThriftAll,
+    groupThriftUser,
   };
 };
 
-export default useFetchIndividual;
+export default useFetchGroups;

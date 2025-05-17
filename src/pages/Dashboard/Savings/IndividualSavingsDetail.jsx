@@ -3,13 +3,16 @@ import { DashNav } from "../../../components/shared/Reuse";
 import { MobileDashNav } from "../../../components/shared/Reuse";
 import { IoIosArrowBack } from "react-icons/io";
 import { BiLayout } from "react-icons/bi";
-import { useParams, Link } from "react-router";
+import { useParams, Link, useLocation } from "react-router";
 import useFetchIndividual from "../../../hooks/useFetchIndividual";
 import tokenList from "../../../constants/tokenList.json";
 import { formatUnits } from "ethers";
+import Save from "../../../components/dashboard/Save";
 
 const IndividualSavingsDetail = () => {
   const { id } = useParams();
+  const location = useLocation();
+  const { address } = location.state || {};
   const { singleThriftUser } = useFetchIndividual();
   if (!singleThriftUser || singleThriftUser.length === 0) {
     return <p className="p-4">Loading individual savings data...</p>;
@@ -18,7 +21,6 @@ const IndividualSavingsDetail = () => {
   const selectedGoal = singleThriftUser?.find(
     (item) => item.goalId === Number(id)
   );
-  console.log(selectedGoal);
 
   const getTokenDecimals = (currencyAddress) => {
     const token = tokenList[currencyAddress];
@@ -49,9 +51,17 @@ const IndividualSavingsDetail = () => {
   const saved = getReadableAmount(selectedGoal.saved, selectedGoal.currency);
   const percent =
     (parseFloat(selectedGoal.saved) / parseFloat(selectedGoal.goal)) * 100;
-    const frequencyOptions = ["daily", "weekly", "bi-weekly", "monthly"]
+  const frequencyOptions = ["daily", "weekly", "bi-weekly", "monthly"];
   const start = getReadableDate(selectedGoal.startDate);
   const end = getReadableDate(selectedGoal.endDate);
+  const decimals = getTokenDecimals(selectedGoal.currency);
+  const rawGoal = parseFloat(formatUnits(selectedGoal.goal, decimals));
+  const rawSaved = parseFloat(formatUnits(selectedGoal.saved, decimals));
+  const rawLeft = rawGoal - rawSaved;
+
+  const displayLeft = rawLeft.toLocaleString(undefined, {
+    maximumFractionDigits: 2,
+  });
 
   return (
     <main className="">
@@ -70,9 +80,7 @@ const IndividualSavingsDetail = () => {
           </h2>
         </div>
         <div className="flex items-center">
-          <button className="bg-linear-to-r from-primary to-lilac font-[500] text-white py-3 px-6 mb-3 text-[12px] flex justify-center rounded-full hover:scale-105 items-center">
-            Save
-          </button>
+          <Save address={address} />
           <button className="border rounded-full border-primary py-3 px-6 ml-3 text-[12px] mb-3">
             Withdraw
           </button>
@@ -111,7 +119,7 @@ const IndividualSavingsDetail = () => {
                 Total amount contributed
               </h3>
               <p className="text-[14px] text-grey">${saved}</p>
-           
+
               <p className="text-grey text-[12px]">
                 You have contributed ${saved}
               </p>
@@ -123,12 +131,10 @@ const IndividualSavingsDetail = () => {
             </div>
             <div className="w-[75%]">
               <h3 className="text-[14px] font-[600]">Total amount left</h3>
-              <p className="text-[14px] text-grey">
-                ${goal - saved}
-              </p>
-            
+              <p className="text-[14px] text-grey">${displayLeft}</p>
+
               <p className="text-grey text-[12px]">
-                You have ${goal - saved} left to meet your goals
+                You have ${displayLeft} left to meet your goals
               </p>
             </div>
           </div>
@@ -149,9 +155,7 @@ const IndividualSavingsDetail = () => {
             </div>
             <div className="w-[75%]">
               <h3 className="text-[14px] font-[600]">Commencement Date</h3>
-              <p className="text-[14px] text-grey">
-                {start}
-              </p>
+              <p className="text-[14px] text-grey">{start}</p>
             </div>
           </div>
           <div className="flex items-center lg:w-[32%] md:w-[32%] w-[100%] mb-3 bg-white rounded-2xl p-3">
@@ -160,9 +164,7 @@ const IndividualSavingsDetail = () => {
             </div>
             <div className="w-[75%]">
               <h3 className="text-[14px] font-[600]">Possible End Date</h3>
-              <p className="text-[14px] text-grey">
-                {end}
-              </p>
+              <p className="text-[14px] text-grey">{end}</p>
             </div>
           </div>
         </div>

@@ -7,12 +7,12 @@ const GroupModuleCard = () => {
   return (
     <div className="bg-white lg:w-[48%] md:w-[48%] w-[100%] rounded-lg p-6 shadow-xl mb-3">
     <p className="text-[12px] font-[500]">Total Group Savings</p>
-    <h3 className="text-[18px] font-[600]">#10,893.09</h3>
+    <h3 className="text-[18px] font-[600]">#0</h3>
     <p className="text-[12px] flex">
       From last month{" "}
       <span className="text-green-600 flex items-center ml-3">
         <MdArrowOutward />
-        7.85%
+        0%
       </span>
     </p>
     <NavLink

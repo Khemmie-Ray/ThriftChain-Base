@@ -5,8 +5,11 @@ import useFetchIndividual from "../../hooks/useFetchIndividual";
 import tokenList from "../../constants/tokenList.json";
 import { formatUnits } from "ethers";
 
-const HistoryCard = () => {
-  const { singleThriftUser } = useFetchIndividual();
+const AllIndividualthrift = () => {
+  const { singleThriftAll } = useFetchIndividual();
+  if (!singleThriftAll || singleThriftAll.length === 0) {
+    return <p className="p-4">Loading individual savings data...</p>;
+  }
 
   const getTokenDecimals = (currencyAddress) => {
     const token = tokenList[currencyAddress];
@@ -33,8 +36,8 @@ const HistoryCard = () => {
     });
   };
   return (
-    <div className="w-[100%] flex justify-between items-center flex-col mt-6">
-      {singleThriftUser.map((info) => {
+    <div className="w-[100%] flex justify-between items-center flex-col  mt-6">
+      {singleThriftAll.map((info) => {
         const goal = getReadableAmount(info.goal, info.currency);
         const saved = getReadableAmount(info.saved, info.currency);
         const percent = (parseFloat(info.saved) / parseFloat(info.goal)) * 100;
@@ -73,8 +76,7 @@ const HistoryCard = () => {
               </p>
             </div>
             <Link
-              to={`/dashboard/individual-savings/${info.goalId}`}
-              state={{ address: info.address }} 
+              to={`/dashboard/allsavings/${info.goalId}`}
               className="flex justify-center items-center border rounded-full border-primary p-2 text-[12px] lg:w-[25%] md:w-[25%] w-[100%] mb-3"
             >
               View Details
@@ -86,4 +88,4 @@ const HistoryCard = () => {
   );
 };
 
-export default HistoryCard;
+export default AllIndividualthrift

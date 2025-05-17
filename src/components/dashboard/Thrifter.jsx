@@ -5,6 +5,7 @@ import { GoArrowDownLeft } from "react-icons/go";
 import HistoryCard from "./HistoryCard";
 import Notifications from "./Notifications";
 import ModuleCard from "./ModuleCard";
+import HistoryGroupCard from "./HistoryGroupCard";
 
 const Thrifter = () => {
   return (
@@ -15,12 +16,12 @@ const Thrifter = () => {
          <ModuleCard />
           <div className="bg-white lg:w-[48%] md:w-[48%] w-[100%] rounded-lg p-6 shadow-xl mb-3">
             <p className="text-[12px] font-[500]">Total Group Savings</p>
-            <h3 className="text-[18px] font-[600]">#4867.09</h3>
+            <h3 className="text-[18px] font-[600]">#0</h3>
             <p className="text-[12px] flex">
               From last month{" "}
               <span className="text-red-600 flex items-center ml-3">
                 <GoArrowDownLeft />
-                23.3%
+                0%
               </span>
             </p>
             <NavLink
@@ -36,6 +37,7 @@ const Thrifter = () => {
             Ongoing Savings <span className="text-[12px] font-[500] text-primary">View All</span>
           </p>
           <HistoryCard />
+          <HistoryGroupCard />
         </div>
       </div>
       <div className="lg:w-[49%] md:w-[49%] w-[100%] mb-3">
